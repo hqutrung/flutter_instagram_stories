@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:dismissible_page/dismissible_page.dart';
 
 import 'components//stories_list_skeleton.dart';
 import 'grouped_stories_view.dart';
@@ -225,33 +226,24 @@ class _FlutterInstagramStoriesState extends State<FlutterInstagramStories> {
                     ),
                     onTap: () async {
                       _backStateAdditional = true;
-                      Navigator.push(
-                        context,
-                        NoAnimationMaterialPageRoute(
-                          builder: (context) => GroupedStoriesView(
-                            collectionDbName: widget.collectionDbName,
-                            languageCode: widget.languageCode,
-                            imageStoryDuration: widget.imageStoryDuration,
-                            progressPosition: widget.progressPosition,
-                            repeat: widget.repeat,
-                            inline: widget.inline,
-                            backgroundColorBetweenStories:
-                                widget.backgroundColorBetweenStories,
-                            closeButtonIcon: widget.closeButtonIcon,
-                            closeButtonBackgroundColor:
-                                widget.closeButtonBackgroundColor,
-                            sortingOrderDesc: widget.sortingOrderDesc,
-                            captionTextStyle: widget.captionTextStyle,
-                            captionPadding: widget.captionPadding,
-                            captionMargin: widget.captionMargin,
-                          ),
-                          settings: RouteSettings(
-                            arguments: StoriesListWithPressed(
-                                pressedStoryId: story.storyId,
-                                storiesIdsList: storiesIdsList),
-                          ),
+                      context.pushTransparentRoute(
+                        GroupedStoriesView(
+                          collectionDbName: widget.collectionDbName,
+                          languageCode: widget.languageCode,
+                          imageStoryDuration: widget.imageStoryDuration,
+                          progressPosition: widget.progressPosition,
+                          repeat: widget.repeat,
+                          inline: widget.inline,
+                          backgroundColorBetweenStories:
+                              widget.backgroundColorBetweenStories,
+                          closeButtonIcon: widget.closeButtonIcon,
+                          closeButtonBackgroundColor:
+                              widget.closeButtonBackgroundColor,
+                          sortingOrderDesc: widget.sortingOrderDesc,
+                          captionTextStyle: widget.captionTextStyle,
+                          captionPadding: widget.captionPadding,
+                          captionMargin: widget.captionMargin,
                         ),
-//                        ModalRoute.withName('/'),
                       );
                     },
                   ),

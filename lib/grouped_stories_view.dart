@@ -208,7 +208,7 @@ class _GroupedStoriesViewState extends State<GroupedStoriesView> {
                   ),
                 ),
                 Positioned(
-                  top: 10,
+                  top: 30,
                   right: 10,
                   child: GestureDetector(
                     onTap: () {

@@ -23,7 +23,6 @@ class VideoLoader {
   void loadVideo(VoidCallback onComplete) {
     if (this.videoFile != null) {
       this.state = LoadState.loading;
-      onComplete();
     }
 
     final Stream<FileInfo> fileStream =
@@ -78,11 +77,13 @@ class StoryVideoState extends State<StoryVideo> {
   @override
   void initState() {
     super.initState();
+
     widget.videoLoader.loadVideo(
       () {
         if (widget.videoLoader.state == LoadState.success) {
           this.playerController =
               VideoPlayerController.file(widget.videoLoader.videoFile!);
+          setState(() {});
 
           playerController!.initialize().then((v) {
             // setState(() {});

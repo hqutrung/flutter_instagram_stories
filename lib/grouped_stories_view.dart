@@ -87,6 +87,21 @@ class _GroupedStoriesViewState extends State<GroupedStoriesView> {
             backgroundColor: widget.backgroundColorBetweenStories,
             body: Stack(
               children: [
+                Positioned(
+                  top: MediaQuery.of(context).size.height / 3,
+                  right: MediaQuery.of(context).size.width / 2,
+                  child: Hero(
+                    tag: storiesListWithPressed.pressedStoryId ?? '',
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        color: Colors.transparent,
+                      ),
+                    ),
+                  ),
+                ),
                 Container(
                   child: FutureBuilder<DocumentSnapshot>(
                     future: _firestore
@@ -116,94 +131,86 @@ class _GroupedStoriesViewState extends State<GroupedStoriesView> {
                       );
                       storyItemList.add(_storiesData.storyItems);
 
-                      return Hero(
-                        tag: storiesListWithPressed.pressedStoryId ?? '',
-                        child: Dismissible(
-                            background: Container(
-                                color: widget.backgroundColorBetweenStories),
-                            crossAxisEndOffset: 0.0,
-                            key: UniqueKey(),
-                            onDismissed: (DismissDirection direction) {
-                              if (direction == DismissDirection.endToStart) {
-                                String? nextStoryId =
-                                    storiesListWithPressed.nextElementStoryId();
-                                if (nextStoryId == null) {
-                                  _navigateBack();
-                                } else {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    TransitionRightMaterialPageRoute(
-                                      builder: (context) =>
-                                          _groupedStoriesView(),
-                                      settings: RouteSettings(
-                                        arguments: StoriesListWithPressed(
-                                            pressedStoryId: nextStoryId,
-                                            storiesIdsList:
-                                                storiesListWithPressed
-                                                    .storiesIdsList),
-                                      ),
-                                    ),
-                                  );
-                                }
+                      return Dismissible(
+                          background: Container(
+                              color: widget.backgroundColorBetweenStories),
+                          crossAxisEndOffset: 0.0,
+                          key: UniqueKey(),
+                          onDismissed: (DismissDirection direction) {
+                            if (direction == DismissDirection.endToStart) {
+                              String? nextStoryId =
+                                  storiesListWithPressed.nextElementStoryId();
+                              if (nextStoryId == null) {
+                                _navigateBack();
                               } else {
-                                String? previousStoryId = storiesListWithPressed
-                                    .previousElementStoryId();
-                                if (previousStoryId == null) {
-                                  _navigateBack();
-                                } else {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    TransitionLeftMaterialPageRoute(
-                                      builder: (context) =>
-                                          _groupedStoriesView(),
-                                      settings: RouteSettings(
-                                        arguments: StoriesListWithPressed(
-                                            pressedStoryId: previousStoryId,
-                                            storiesIdsList:
-                                                storiesListWithPressed
-                                                    .storiesIdsList),
-                                      ),
-                                    ),
-                                  );
-                                }
-                              }
-                            },
-                            child: StoryView(
-                              widget.sortingOrderDesc!
-                                  ? storyItemList[0].reversed.toList()
-                                  : storyItemList[0],
-                              controller: storyController,
-                              progressPosition: widget.progressPosition!,
-                              repeat: widget.repeat!,
-                              inline: widget.inline!,
-                              onStoryShow: (StoryItem s) {
-                                _onStoryShow(s);
-                              },
-                              goForward: () {},
-                              onComplete: () {
-                                String? nextStoryId =
-                                    storiesListWithPressed.nextElementStoryId();
-                                if (nextStoryId == null) {
-                                  _navigateBack();
-                                } else {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    TransitionRightMaterialPageRoute(
-                                      builder: (context) =>
-                                          _groupedStoriesView(),
-                                      settings: RouteSettings(
-                                        arguments: StoriesListWithPressed(
+                                Navigator.pushReplacement(
+                                  context,
+                                  TransitionRightMaterialPageRoute(
+                                    builder: (context) => _groupedStoriesView(),
+                                    settings: RouteSettings(
+                                      arguments: StoriesListWithPressed(
                                           pressedStoryId: nextStoryId,
                                           storiesIdsList: storiesListWithPressed
-                                              .storiesIdsList,
-                                        ),
+                                              .storiesIdsList),
+                                    ),
+                                  ),
+                                );
+                              }
+                            } else {
+                              String? previousStoryId = storiesListWithPressed
+                                  .previousElementStoryId();
+                              if (previousStoryId == null) {
+                                _navigateBack();
+                              } else {
+                                Navigator.pushReplacement(
+                                  context,
+                                  TransitionLeftMaterialPageRoute(
+                                    builder: (context) => _groupedStoriesView(),
+                                    settings: RouteSettings(
+                                      arguments: StoriesListWithPressed(
+                                          pressedStoryId: previousStoryId,
+                                          storiesIdsList: storiesListWithPressed
+                                              .storiesIdsList),
+                                    ),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          child: StoryView(
+                            widget.sortingOrderDesc!
+                                ? storyItemList[0].reversed.toList()
+                                : storyItemList[0],
+                            controller: storyController,
+                            progressPosition: widget.progressPosition!,
+                            repeat: widget.repeat!,
+                            inline: widget.inline!,
+                            onStoryShow: (StoryItem s) {
+                              _onStoryShow(s);
+                            },
+                            goForward: () {},
+                            onComplete: () {
+                              String? nextStoryId =
+                                  storiesListWithPressed.nextElementStoryId();
+                              if (nextStoryId == null) {
+                                _navigateBack();
+                              } else {
+                                Navigator.pushReplacement(
+                                  context,
+                                  TransitionRightMaterialPageRoute(
+                                    builder: (context) => _groupedStoriesView(),
+                                    settings: RouteSettings(
+                                      arguments: StoriesListWithPressed(
+                                        pressedStoryId: nextStoryId,
+                                        storiesIdsList: storiesListWithPressed
+                                            .storiesIdsList,
                                       ),
                                     ),
-                                  );
-                                }
-                              },
-                            )),
-                      );
+                                  ),
+                                );
+                              }
+                            },
+                          ));
                     },
                   ),
                 ),

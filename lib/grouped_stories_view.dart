@@ -21,6 +21,7 @@ class GroupedStoriesView extends StatefulWidget {
   final bool? repeat;
   final bool? inline;
   final Icon? closeButtonIcon;
+  final Widget? Function({String? userID})? userBuilder;
   final Color? closeButtonBackgroundColor;
   final Color? backgroundColorBetweenStories;
   final bool? sortingOrderDesc;
@@ -28,20 +29,22 @@ class GroupedStoriesView extends StatefulWidget {
   final EdgeInsets? captionMargin;
   final EdgeInsets? captionPadding;
 
-  GroupedStoriesView(
-      {this.collectionDbName,
-      this.languageCode,
-      this.imageStoryDuration,
-      this.progressPosition,
-      this.repeat,
-      this.inline,
-      this.backgroundColorBetweenStories,
-      this.closeButtonIcon,
-      this.closeButtonBackgroundColor,
-      this.sortingOrderDesc,
-      this.captionTextStyle,
-      this.captionMargin,
-      this.captionPadding});
+  GroupedStoriesView({
+    this.collectionDbName,
+    this.languageCode,
+    this.imageStoryDuration,
+    this.progressPosition,
+    this.repeat,
+    this.inline,
+    this.backgroundColorBetweenStories,
+    this.closeButtonIcon,
+    this.closeButtonBackgroundColor,
+    this.sortingOrderDesc,
+    this.captionTextStyle,
+    this.captionMargin,
+    this.captionPadding,
+    this.userBuilder,
+  });
 
   @override
   _GroupedStoriesViewState createState() => _GroupedStoriesViewState();
@@ -131,86 +134,99 @@ class _GroupedStoriesViewState extends State<GroupedStoriesView> {
                       );
                       storyItemList.add(_storiesData.storyItems);
 
-                      return Dismissible(
-                          background: Container(
-                              color: widget.backgroundColorBetweenStories),
-                          crossAxisEndOffset: 0.0,
-                          key: UniqueKey(),
-                          onDismissed: (DismissDirection direction) {
-                            if (direction == DismissDirection.endToStart) {
-                              String? nextStoryId =
-                                  storiesListWithPressed.nextElementStoryId();
-                              if (nextStoryId == null) {
-                                _navigateBack();
-                              } else {
-                                Navigator.pushReplacement(
-                                  context,
-                                  TransitionRightMaterialPageRoute(
-                                    builder: (context) => _groupedStoriesView(),
-                                    settings: RouteSettings(
-                                      arguments: StoriesListWithPressed(
-                                          pressedStoryId: nextStoryId,
-                                          storiesIdsList: storiesListWithPressed
-                                              .storiesIdsList),
-                                    ),
-                                  ),
-                                );
-                              }
-                            } else {
-                              String? previousStoryId = storiesListWithPressed
-                                  .previousElementStoryId();
-                              if (previousStoryId == null) {
-                                _navigateBack();
-                              } else {
-                                Navigator.pushReplacement(
-                                  context,
-                                  TransitionLeftMaterialPageRoute(
-                                    builder: (context) => _groupedStoriesView(),
-                                    settings: RouteSettings(
-                                      arguments: StoriesListWithPressed(
-                                          pressedStoryId: previousStoryId,
-                                          storiesIdsList: storiesListWithPressed
-                                              .storiesIdsList),
-                                    ),
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                          child: StoryView(
-                            widget.sortingOrderDesc!
-                                ? storyItemList[0].reversed.toList()
-                                : storyItemList[0],
-                            controller: storyController,
-                            progressPosition: widget.progressPosition!,
-                            repeat: widget.repeat!,
-                            inline: widget.inline!,
-                            onStoryShow: (StoryItem s) {
-                              _onStoryShow(s);
-                            },
-                            goForward: () {},
-                            onComplete: () {
-                              String? nextStoryId =
-                                  storiesListWithPressed.nextElementStoryId();
-                              if (nextStoryId == null) {
-                                _navigateBack();
-                              } else {
-                                Navigator.pushReplacement(
-                                  context,
-                                  TransitionRightMaterialPageRoute(
-                                    builder: (context) => _groupedStoriesView(),
-                                    settings: RouteSettings(
-                                      arguments: StoriesListWithPressed(
-                                        pressedStoryId: nextStoryId,
-                                        storiesIdsList: storiesListWithPressed
-                                            .storiesIdsList,
+                      return Stack(
+                        children: [
+                          Dismissible(
+                              background: Container(
+                                  color: widget.backgroundColorBetweenStories),
+                              crossAxisEndOffset: 0.0,
+                              key: UniqueKey(),
+                              onDismissed: (DismissDirection direction) {
+                                if (direction == DismissDirection.endToStart) {
+                                  String? nextStoryId = storiesListWithPressed
+                                      .nextElementStoryId();
+                                  if (nextStoryId == null) {
+                                    _navigateBack();
+                                  } else {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      TransitionRightMaterialPageRoute(
+                                        builder: (context) =>
+                                            _groupedStoriesView(),
+                                        settings: RouteSettings(
+                                          arguments: StoriesListWithPressed(
+                                              pressedStoryId: nextStoryId,
+                                              storiesIdsList:
+                                                  storiesListWithPressed
+                                                      .storiesIdsList),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          ));
+                                    );
+                                  }
+                                } else {
+                                  String? previousStoryId =
+                                      storiesListWithPressed
+                                          .previousElementStoryId();
+                                  if (previousStoryId == null) {
+                                    _navigateBack();
+                                  } else {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      TransitionLeftMaterialPageRoute(
+                                        builder: (context) =>
+                                            _groupedStoriesView(),
+                                        settings: RouteSettings(
+                                          arguments: StoriesListWithPressed(
+                                              pressedStoryId: previousStoryId,
+                                              storiesIdsList:
+                                                  storiesListWithPressed
+                                                      .storiesIdsList),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              child: StoryView(
+                                widget.sortingOrderDesc!
+                                    ? storyItemList[0].reversed.toList()
+                                    : storyItemList[0],
+                                storyID: storiesListWithPressed.pressedStoryId,
+                                userBuilder: widget.userBuilder,
+                                controller: storyController,
+                                progressPosition: widget.progressPosition!,
+                                repeat: widget.repeat!,
+                                inline: widget.inline!,
+                                onStoryShow: (StoryItem s) {
+                                  _onStoryShow(s);
+                                },
+                                goForward: () {},
+                                onComplete: () {
+                                  String? nextStoryId = storiesListWithPressed
+                                      .nextElementStoryId();
+                                  if (nextStoryId == null) {
+                                    _navigateBack();
+                                  } else {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      TransitionRightMaterialPageRoute(
+                                        builder: (context) =>
+                                            _groupedStoriesView(),
+                                        settings: RouteSettings(
+                                          arguments: StoriesListWithPressed(
+                                            pressedStoryId: nextStoryId,
+                                            storiesIdsList:
+                                                storiesListWithPressed
+                                                    .storiesIdsList,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              )),
+                        ],
+                      );
                     },
                   ),
                 ),
@@ -234,6 +250,7 @@ class _GroupedStoriesViewState extends State<GroupedStoriesView> {
 
   GroupedStoriesView _groupedStoriesView() {
     return GroupedStoriesView(
+      userBuilder: widget.userBuilder,
       collectionDbName: widget.collectionDbName,
       languageCode: widget.languageCode,
       imageStoryDuration: widget.imageStoryDuration,

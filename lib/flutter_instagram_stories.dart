@@ -30,6 +30,8 @@ class FlutterInstagramStories extends StatefulWidget {
   final BoxDecoration? iconBoxDecoration;
   final BorderRadius? iconImageBorderRadius;
   final EdgeInsets textInIconPadding;
+  final Widget? Function({String? userID})? avatarBuilder;
+  final Widget? Function({String? userID})? userBuilder;
 
   /// caption on image
   final TextStyle captionTextStyle;
@@ -89,7 +91,9 @@ class FlutterInstagramStories extends StatefulWidget {
       this.progressPosition = ProgressPosition.top,
       this.repeat = true,
       this.inline = false,
-      this.languageCode = 'en'});
+      this.languageCode = 'en',
+      this.avatarBuilder,
+      this.userBuilder});
 
   @override
   _FlutterInstagramStoriesState createState() =>
@@ -185,22 +189,23 @@ class _FlutterInstagramStoriesState extends State<FlutterInstagramStories> {
                           width: widget.iconWidth,
                           height: widget.iconHeight,
                           child: Stack(children: <Widget>[
-                            ClipRRect(
-                              borderRadius: widget.iconImageBorderRadius,
-                              child: CachedNetworkImage(
-                                imageUrl: story.previewImage!,
-                                width: widget.iconWidth,
-                                height: widget.iconHeight,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) =>
-                                    StoriesListSkeletonAlone(
-                                  width: widget.iconWidth!,
-                                  height: widget.iconHeight!,
+                            widget.avatarBuilder?.call(userID: story.storyId) ??
+                                ClipRRect(
+                                  borderRadius: widget.iconImageBorderRadius,
+                                  child: CachedNetworkImage(
+                                    imageUrl: story.previewImage ?? '',
+                                    width: widget.iconWidth,
+                                    height: widget.iconHeight,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) =>
+                                        StoriesListSkeletonAlone(
+                                      width: widget.iconWidth!,
+                                      height: widget.iconHeight!,
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  ),
                                 ),
-                                errorWidget: (context, url, error) =>
-                                    Icon(Icons.error),
-                              ),
-                            ),
                             Container(
                               width: widget.iconWidth,
                               height: widget.iconHeight,
@@ -228,6 +233,7 @@ class _FlutterInstagramStoriesState extends State<FlutterInstagramStories> {
                       _backStateAdditional = true;
                       context.pushTransparentRoute(
                         GroupedStoriesView(
+                          userBuilder: widget.userBuilder,
                           collectionDbName: widget.collectionDbName,
                           languageCode: widget.languageCode,
                           imageStoryDuration: widget.imageStoryDuration,
@@ -259,22 +265,24 @@ class _FlutterInstagramStoriesState extends State<FlutterInstagramStories> {
                       child: Stack(children: <Widget>[
                         Hero(
                           tag: story.storyId ?? '',
-                          child: ClipRRect(
-                            borderRadius: widget.iconImageBorderRadius,
-                            child: CachedNetworkImage(
-                              imageUrl: story.previewImage!,
-                              width: widget.iconWidth,
-                              height: widget.iconHeight,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) =>
-                                  StoriesListSkeletonAlone(
-                                width: widget.iconWidth!,
-                                height: widget.iconHeight!,
+                          child: widget.avatarBuilder
+                                  ?.call(userID: story.storyId) ??
+                              ClipRRect(
+                                borderRadius: widget.iconImageBorderRadius,
+                                child: CachedNetworkImage(
+                                  imageUrl: story.previewImage ?? '',
+                                  width: widget.iconWidth,
+                                  height: widget.iconHeight,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) =>
+                                      StoriesListSkeletonAlone(
+                                    width: widget.iconWidth!,
+                                    height: widget.iconHeight!,
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
+                                ),
                               ),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                            ),
-                          ),
                         ),
                         Container(
                           width: widget.iconWidth,
@@ -303,6 +311,7 @@ class _FlutterInstagramStoriesState extends State<FlutterInstagramStories> {
                         context,
                         NoAnimationMaterialPageRoute(
                           builder: (context) => GroupedStoriesView(
+                            userBuilder: widget.userBuilder,
                             collectionDbName: widget.collectionDbName,
                             languageCode: widget.languageCode,
                             imageStoryDuration: widget.imageStoryDuration,

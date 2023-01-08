@@ -265,6 +265,10 @@ class StoryView extends StatefulWidget {
   /// each time the full story completes when [repeat] is set to `true`.
   final VoidCallback? onComplete;
 
+  final Widget? Function({String? userID})? userBuilder;
+
+  final String? storyID;
+
   ///awaik
   final VoidCallback? goForward;
 
@@ -293,6 +297,8 @@ class StoryView extends StatefulWidget {
     this.progressPosition = ProgressPosition.top,
     this.repeat = false,
     this.inline = false,
+    this.userBuilder,
+    this.storyID,
   }) : assert(
             storyItems.length > 0, "[storyItems] should not be null or empty");
 
@@ -490,6 +496,17 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
             color: Colors.transparent,
             child: Center(
               child: currentView,
+            ),
+          ),
+          Visibility(
+            visible: widget.userBuilder != null,
+            child: Positioned(
+              top: 20,
+              left: 10,
+              child: widget.userBuilder?.call(
+                    userID: widget.storyID,
+                  ) ??
+                  Container(),
             ),
           ),
           Align(

@@ -453,7 +453,8 @@ class StoryViewState extends State<StoryView> with TickerProviderStateMixin {
       }
     } else {
       // this is the last page, progress animation should skip to end
-      animationController!.animateTo(1.0, duration: Duration(milliseconds: 10));
+      // animationController!.animateTo(1.0, duration: Duration(milliseconds: 10));
+      widget.onComplete?.call();
     }
   }
 

@@ -10,10 +10,10 @@ StoryData _$StoryDataFromJson(Map<String, dynamic> json) {
   return StoryData(
     filetype: json['filetype'] as String?,
     url: (json['url'] as Map<String, dynamic>?)?.map(
-      (k, e) => MapEntry(k, e as String),
+      (k, e) => MapEntry(k, e as String?),
     ),
   )..fileTitle = (json['fileTitle'] as Map<String, dynamic>?)?.map(
-      (k, e) => MapEntry(k, e as String),
+      (k, e) => MapEntry(k, e as String?),
     );
 }
 

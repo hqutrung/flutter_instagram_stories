@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cached_video_player/cached_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_instagram_stories/story_controller.dart';
-import 'package:video_player/video_player.dart';
 
 import 'story_view.dart';
 import 'utils.dart';
@@ -42,20 +42,19 @@ class VideoLoader {
 
 class StoryVideo extends StatefulWidget {
   final StoryController? storyController;
-  final VideoLoader videoLoader;
+  final String? url;
 
-  StoryVideo(this.videoLoader, {this.storyController, Key? key})
+  StoryVideo({this.url, this.storyController, Key? key})
       : super(key: key ?? UniqueKey());
 
-  static StoryVideo url(
-    String? url, {
+  static StoryVideo fromUrl({
+    String? url,
     StoryController? controller,
-    Map<String, dynamic>? requestHeaders,
     VoidCallback? adjustDuration,
     Key? key,
   }) {
     return StoryVideo(
-      VideoLoader(url, requestHeaders: requestHeaders),
+      url: url,
       storyController: controller,
       key: key,
     );
@@ -72,40 +71,32 @@ class StoryVideoState extends State<StoryVideo> {
 
   StreamSubscription? _streamSubscription;
 
-  VideoPlayerController? playerController;
+  CachedVideoPlayerController? playerController;
 
   @override
   void initState() {
     super.initState();
+    if (widget.url == null) {
+      return;
+    }
 
-    widget.videoLoader.loadVideo(
-      () {
-        if (widget.videoLoader.state == LoadState.success) {
-          this.playerController =
-              VideoPlayerController.file(widget.videoLoader.videoFile!);
-          setState(() {});
+    playerController = CachedVideoPlayerController.network(widget.url!);
+    playerController?.initialize().then((v) {
+      widget.storyController!.play();
+      setState(() {});
+    });
 
-          playerController!.initialize().then((v) {
-            // setState(() {});
-            widget.storyController!.play();
-          });
-
-          if (widget.storyController != null) {
-            playerController!.addListener(checkIfVideoFinished);
-            _streamSubscription = widget.storyController!.playbackNotifier
-                .listen((playbackState) {
-              if (playbackState == PlaybackState.pause) {
-                playerController!.pause();
-              } else {
-                playerController!.play();
-              }
-            });
-          }
+    if (widget.storyController != null) {
+      playerController?.addListener(checkIfVideoFinished);
+      _streamSubscription =
+          widget.storyController!.playbackNotifier.listen((playbackState) {
+        if (playbackState == PlaybackState.pause) {
+          playerController?.pause();
         } else {
-          // setState(() {});
+          playerController?.play();
         }
-      },
-    );
+      });
+    }
   }
 
   @override
@@ -119,15 +110,18 @@ class StoryVideoState extends State<StoryVideo> {
   }
 
   Widget getContentView() {
-    if (widget.videoLoader.state == LoadState.success) {
+    if (widget.url == null) {
+      return Container();
+    }
+    if (playerController?.value.isInitialized ?? false) {
       return Center(
         child: AspectRatio(
           aspectRatio: playerController!.value.aspectRatio,
-          child: VideoPlayer(playerController!),
+          child: CachedVideoPlayer(playerController!),
         ),
       );
     }
-    return widget.videoLoader.state == LoadState.loading
+    return !(playerController?.value.hasError ?? true)
         ? Center(
             child: Container(
               width: 70,
@@ -156,9 +150,9 @@ class StoryVideoState extends State<StoryVideo> {
 
   void checkIfVideoFinished() {
     try {
-      if (playerController!.value.position.inSeconds ==
-          playerController!.value.duration.inSeconds) {
-        playerController!.removeListener(checkIfVideoFinished);
+      if (playerController?.value.position.inSeconds ==
+          playerController?.value.duration.inSeconds) {
+        playerController?.removeListener(checkIfVideoFinished);
       }
     } catch (e) {}
   }

@@ -42,7 +42,7 @@ class StoriesData {
         var i = 0;
         for (var file in storyData.file!) {
           if (file.filetype == 'image' && i < _cacheDepth) {
-            DefaultCacheManager().getSingleFile(file.url![languageCode!]!);
+            DefaultCacheManager().getSingleFile(file.url![languageCode!] ?? '');
             i += 1;
           }
         }
@@ -68,7 +68,9 @@ class StoriesData {
     stories.file!.asMap().forEach((index, storyInsideImage) {
       if (storyInsideImage.filetype != 'video') {
         storyItems.add(StoryItem.pageImage(
-          CachedNetworkImageProvider(storyInsideImage.url![languageCode!]!),
+          CachedNetworkImageProvider(
+            storyInsideImage.url![languageCode!] ?? '',
+          ),
           // controller: storyController,
           duration: Duration(seconds: imageStoryDuration),
           caption: storyInsideImage.fileTitle != null
@@ -107,8 +109,9 @@ class StoriesData {
       }
       // cache images inside story
       if (index < stories.file!.length - 1) {
-        DefaultCacheManager()
-            .getSingleFile(stories.file![index + 1].url![languageCode!]!);
+        DefaultCacheManager().getSingleFile(
+          stories.file![index + 1].url![languageCode!] ?? '',
+        );
       }
     });
   }

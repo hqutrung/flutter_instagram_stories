@@ -138,7 +138,8 @@ class _GroupedStoriesViewState extends State<GroupedStoriesView> {
                         children: [
                           Dismissible(
                               background: Container(
-                                  color: widget.backgroundColorBetweenStories),
+                                color: widget.backgroundColorBetweenStories,
+                              ),
                               crossAxisEndOffset: 0.0,
                               key: UniqueKey(),
                               onDismissed: (DismissDirection direction) {
@@ -155,10 +156,11 @@ class _GroupedStoriesViewState extends State<GroupedStoriesView> {
                                             _groupedStoriesView(),
                                         settings: RouteSettings(
                                           arguments: StoriesListWithPressed(
-                                              pressedStoryId: nextStoryId,
-                                              storiesIdsList:
-                                                  storiesListWithPressed
-                                                      .storiesIdsList),
+                                            pressedStoryId: nextStoryId,
+                                            storiesIdsList:
+                                                storiesListWithPressed
+                                                    .storiesIdsList,
+                                          ),
                                         ),
                                       ),
                                     );

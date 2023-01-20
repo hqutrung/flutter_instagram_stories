@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/gestures.dart';
@@ -121,6 +122,7 @@ class StoryItem {
             ),
             caption != null && caption.length > 0
                 ? SafeArea(
+                    bottom: false,
                     child: Align(
                       alignment: Alignment.bottomCenter,
                       child: Container(
@@ -178,6 +180,7 @@ class StoryItem {
             ),
             caption != null && caption.length > 0
                 ? SafeArea(
+                    bottom: false,
                     child: Align(
                       alignment: Alignment.bottomCenter,
                       child: Container(
@@ -222,12 +225,12 @@ class StoryItem {
         color: Colors.black,
         child: Stack(
           children: <Widget>[
-            StoryVideo.url(
-              url,
+            StoryVideo.fromUrl(
+              url: url,
               controller: controller,
-              requestHeaders: requestHeaders,
             ),
             SafeArea(
+              bottom: false,
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(

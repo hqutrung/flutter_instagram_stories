@@ -120,7 +120,7 @@ class _FlutterInstagramStoriesState extends State<FlutterInstagramStories> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.transparent,
-      height: widget.iconHeight! + 24,
+      height: widget.iconHeight!,
       child: StreamBuilder<QuerySnapshot>(
         stream: _firestore
             .collection(widget.collectionDbName)
@@ -134,7 +134,7 @@ class _FlutterInstagramStoriesState extends State<FlutterInstagramStories> {
               itemCount: 3,
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
-                  padding: EdgeInsets.only(left: 15.0, top: 8.0, bottom: 16.0),
+                  padding: EdgeInsets.only(left: 15.0, top: 8.0),
                   child: InkWell(
                     child: Container(
                       width: widget.iconWidth,
@@ -174,7 +174,7 @@ class _FlutterInstagramStoriesState extends State<FlutterInstagramStories> {
 
               if (index == 0 && widget.lastIconHighlight) {
                 return Padding(
-                  padding: EdgeInsets.only(left: 15.0, top: 8.0, bottom: 16.0),
+                  padding: EdgeInsets.only(left: 15.0, top: 8.0),
                   child: InkWell(
                     child: DottedBorder(
                       color: widget.lastIconHighlightColor,
@@ -256,8 +256,8 @@ class _FlutterInstagramStoriesState extends State<FlutterInstagramStories> {
                 );
               } else {
                 return Padding(
-                  padding: EdgeInsets.only(left: 15.0, top: 8.0, bottom: 16.0),
-                  child: InkWell(
+                  padding: EdgeInsets.only(left: 15.0, top: 8.0),
+                  child: GestureDetector(
                     child: Container(
                       decoration: widget.iconBoxDecoration,
                       width: widget.iconWidth,

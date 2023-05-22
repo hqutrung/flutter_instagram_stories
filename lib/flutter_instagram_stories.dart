@@ -128,33 +128,7 @@ class _FlutterInstagramStoriesState extends State<FlutterInstagramStories> {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return ListView.builder(
-              scrollDirection: Axis.horizontal,
-              primary: false,
-              itemCount: 3,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: EdgeInsets.only(left: 15.0, top: 8.0),
-                  child: InkWell(
-                    child: Container(
-                      width: widget.iconWidth,
-                      height: widget.iconHeight,
-                      child: Stack(
-                        children: <Widget>[
-                          ClipRRect(
-                            borderRadius: widget.iconImageBorderRadius,
-                            child: StoriesListSkeletonAlone(
-                              width: widget.iconWidth!,
-                              height: widget.iconHeight!,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
+            return SizedBox();
           }
           List<QueryDocumentSnapshot> stories = snapshot.data!.docs;
 

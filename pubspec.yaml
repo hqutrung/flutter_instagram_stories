@@ -17,7 +17,7 @@ dependencies:
   dotted_border: ^2.0.0+3
   json_annotation: any
   collection: any
-  dismissible_page: ^0.7.3
+  dismissible_page: ^1.0.2
   cached_video_player: ^2.0.3
 
 dev_dependencies:

@@ -103,7 +103,6 @@ class FlutterInstagramStories extends StatefulWidget {
 class _FlutterInstagramStoriesState extends State<FlutterInstagramStories> {
   late StoriesData _storiesData;
   final _firestore = FirebaseFirestore.instance;
-  bool _backStateAdditional = false;
 
   @override
   void dispose() {
@@ -204,7 +203,6 @@ class _FlutterInstagramStoriesState extends State<FlutterInstagramStories> {
                       ),
                     ),
                     onTap: () async {
-                      _backStateAdditional = true;
                       context.pushTransparentRoute(
                         GroupedStoriesView(
                           userBuilder: widget.userBuilder,
@@ -280,7 +278,6 @@ class _FlutterInstagramStoriesState extends State<FlutterInstagramStories> {
                       ]),
                     ),
                     onTap: () async {
-                      _backStateAdditional = true;
                       Navigator.push(
                         context,
                         NoAnimationMaterialPageRoute(

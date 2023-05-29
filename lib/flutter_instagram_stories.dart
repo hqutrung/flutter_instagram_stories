@@ -123,7 +123,8 @@ class _FlutterInstagramStoriesState extends State<FlutterInstagramStories> {
       child: StreamBuilder<QuerySnapshot>(
         stream: _firestore
             .collection(widget.collectionDbName)
-            .orderBy('date', descending: widget.sortingOrderDesc)
+            .orderBy('expiryTime', descending: widget.sortingOrderDesc)
+            .where('expiryTime', isGreaterThan: Timestamp.now())
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {

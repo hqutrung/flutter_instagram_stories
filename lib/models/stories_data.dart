@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -30,9 +28,9 @@ class StoriesData {
         'date':
             DateTime.fromMillisecondsSinceEpoch(story.data()!['date'].seconds)
                 .toIso8601String(),
-        'file': jsonDecode(jsonEncode(story.data()!['file'])),
+        'file': story.data()!['file'],
         'previewImage': story.data()!['previewImage'],
-        'previewTitle': jsonDecode(jsonEncode(story.data()!['previewTitle'])),
+        'previewTitle': story.data()!['previewTitle'],
       });
       if (storyData.file != null) {
         storyWidgets.add(storyData);
@@ -64,8 +62,12 @@ class StoriesData {
       'title': toPass['snapshotData']['title'],
       'previewImage': toPass['snapshotData']['previewImage'],
     };
-    Stories stories = Stories.fromJson(jsonDecode(jsonEncode(temp)));
+    Stories stories = Stories.fromJson(temp);
     stories.file!.asMap().forEach((index, storyInsideImage) {
+      if (storyInsideImage.expiryTime != null &&
+          storyInsideImage.expiryTime!.isBefore(DateTime.now())) {
+        return;
+      }
       if (storyInsideImage.filetype != 'video') {
         storyItems.add(StoryItem.pageImage(
           CachedNetworkImageProvider(

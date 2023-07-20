@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:cached_video_player/cached_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_instagram_stories/story_controller.dart';
+import 'package:video_player/video_player.dart';
 
 import 'story_view.dart';
 import 'utils.dart';
@@ -71,7 +71,7 @@ class StoryVideoState extends State<StoryVideo> {
 
   StreamSubscription? _streamSubscription;
 
-  CachedVideoPlayerController? playerController;
+  VideoPlayerController? playerController;
 
   @override
   void initState() {
@@ -80,7 +80,7 @@ class StoryVideoState extends State<StoryVideo> {
       return;
     }
 
-    playerController = CachedVideoPlayerController.network(widget.url!);
+    playerController = VideoPlayerController.network(widget.url!);
     playerController?.initialize().then((v) {
       widget.storyController!.play();
       setState(() {});
@@ -117,7 +117,7 @@ class StoryVideoState extends State<StoryVideo> {
       return Center(
         child: AspectRatio(
           aspectRatio: playerController!.value.aspectRatio,
-          child: CachedVideoPlayer(playerController!),
+          child: VideoPlayer(playerController!),
         ),
       );
     }
